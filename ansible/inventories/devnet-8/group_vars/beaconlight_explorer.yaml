@@ -1,0 +1,90 @@
+
+# explorer config
+beaconlight_beaconapi_endpoint: "http://beacon:{{ ethereum_node_cl_ports_http_beacon }}"
+beaconlight_chain_name: ""
+beaconlight_chain_displayname: ""
+beaconlight_chain_config: "/config/genesis.yml"
+beaconlight_chain_genesistime: 0
+beaconlight_frontend_title: "Beaconchain Light"
+beaconlight_frontend_subtitle: "{{ ethereum_network_name }}"
+beaconlight_frontend_ethexplorer: ""
+beaconlight_frontend_validatornames: ""
+beaconlight_frontend_validatornames_inventory: ""
+
+#beaconlight_url: "beaconlight.{{ network_subdomain }}"
+beaconlight_url: "beaconlight-dev8.pk910.de"
+
+beacon: shared
+beaconlight_container_env:
+  VIRTUAL_HOST: "{{ beaconlight_url }}"
+  VIRTUAL_PORT: "8080"
+  LETSENCRYPT_HOST: "{{ beaconlight_url }}"
+
+beaconlight_extra_config_files:
+  genesis.yml: |
+    {{ lookup('ansible.builtin.file', '../network-configs/devnet-8/config.yaml') }}
+
+beaconlight_config: |
+  # Chain network configuration
+  chain:
+    name: "{{ beaconlight_chain_name }}"
+    configPath: "{{ beaconlight_chain_config }}"
+    displayName: "{{ beaconlight_chain_displayname }}"
+
+  # HTTP Server configuration
+  server:
+    host: "0.0.0.0" # Address to listen on
+    port: "8080" # Port to listen on
+
+  frontend:
+    enabled: true # Enable or disable to web frontend
+    debug: false
+    minimize: false # minimize html templates
+
+    # Name of the site, displayed in the title tag
+    siteName: "{{ beaconlight_frontend_title }}"
+    siteSubtitle: "{{ beaconlight_frontend_subtitle }}"
+
+    # link to EL Explorer
+    ethExplorerLink: "{{ beaconlight_frontend_ethexplorer }}"
+
+    # file or inventory url to load validator names from
+    validatorNamesYaml: "{{ beaconlight_frontend_validatornames }}"
+    validatorNamesInventory: "{{ beaconlight_frontend_validatornames_inventory }}"
+
+  beaconapi:
+    # CL Client RPC
+    endpoint: "{{ beaconlight_beaconapi_endpoint }}"
+
+    # local cache for page models
+    localCacheSize: 100 # 100MB
+
+    # remote cache for page models
+    redisCacheAddr: ""
+    redisCachePrefix: ""
+
+  # indexer keeps track of the latest epochs in memory.
+  indexer:
+    # number of epochs to load on startup
+    prepopulateEpochs: 2
+
+    # max number of epochs to keep in memory
+    inMemoryEpochs: 10
+
+    # epoch processing delay (should be >= 2)
+    epochProcessingDelay: 2
+
+    # disable synchronizing and everything that writes to the db (indexer just maintains local cache)
+    disableIndexWriter: false
+
+    # number of seconds to wait between each epoch (don't overload CL client)
+    syncEpochCooldown: 1
+
+  database:
+    engine: "pgsql"
+    pgsql:
+      host: "beaconlight-database"
+      port: 5432
+      user: "postgres"
+      password: "postgres"
+      name: "beaconlight"
