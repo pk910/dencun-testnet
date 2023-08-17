@@ -1,4 +1,6 @@
 
+beaconlight_container_image: pk910/light-beaconchain-explorer:unstable
+
 # explorer config
 beaconlight_beaconapi_endpoint: "http://beacon:{{ ethereum_node_cl_ports_http_beacon }}"
 beaconlight_chain_name: ""
@@ -25,6 +27,9 @@ beaconlight_extra_config_files:
     {{ lookup('ansible.builtin.file', '../network-configs/devnet-8/config.yaml') }}
 
 beaconlight_config: |
+  logging:
+    outputLevel: "debug"
+
   # Chain network configuration
   chain:
     name: "{{ beaconlight_chain_name }}"
