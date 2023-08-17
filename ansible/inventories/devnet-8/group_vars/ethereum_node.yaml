@@ -1,11 +1,10 @@
 ethereum_cl_bootnodes:
-  - "enr:-Iq4QO1muovGRR8-Okbsm6ipEw8CYs_ZP0TWlf9nelJaoVIaIDtpwiDeQlRLGcppukTWuaerLTp-tHwZJYJN3IUv-n2GAYn9uwt0gmlkgnY0gmlwhI5dg7OJc2VjcDI1NmsxoQPZLBX2rEiQ20AfN2f1SQLfnGMQd_t7Rq0-HNkYA9d4uoN1ZHCCIyk"
-  - "enr:-LK4QE_oehtctXx_uR862hXr6ZnXRDvHRnm7lc0tqpd0grfRJ-mK1ocAiKDwCZTJw0RbbKqSHUW0IBdk1TJu9oikz7YEh2F0dG5ldHOIAAAAAIABAACEZXRoMpC8NFLzQBCTlgUAAAAAAAAAgmlkgnY0gmlwhI5dg7OJc2VjcDI1NmsxoQImVFXk-j9jwl35k8ThDfk4v2e4sD5OvlCSRpISYMSpBYN0Y3CCIyiDdWRwgiMo"
+  - "{{ hostvars['bootnode-1']['cl_bootnode_fact_enr'] }}"
+  - "{{ hostvars['bootnode-1']['ethereum_node_fact_cl_enr'] }}"
 
 
-ethereum_el_bootnodes: 
-  - "enode://4205c4ed5fb3d7d031a3e78ced0b5ad87c1ed583a877141112b548779a57de634693b53b4683848354be318d9c7a669314da7d4b2e156d3770d95026c515086a@104.248.194.214:30303"
-  - "enode://b4f9c9753ec4746657c2cd3fabeb5a72d6cfccd864127dab4c50add3453834498dd0dc8dfd002ed99043333f0732fcc31555175f7dd04560b96788b83f91cf14@142.93.227.50:30303"
+ethereum_el_bootnodes:
+  - "{{ hostvars['bootnode-1']['ethereum_node_fact_el_enode'] }}"
 
 
 # role: ethpandaops.general.prometheus
@@ -58,6 +57,6 @@ prometheus_config: |
     - job_name: "consensus_node"
       metrics_path: "/metrics"
       static_configs:
-        - targets: ["{{ ethereum_node_cl }}:{{ ethereum_node_cl_ports_metrics }}"]
+        - targets: ["{{ vars[ethereum_node_cl + '_container_name'] }}:{{ ethereum_node_cl_ports_metrics }}"]
           labels:
             instance: "{{ inventory_hostname }}"
